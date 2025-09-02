@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 529d0834a4abc5d4bac3498a5ff948be
+guid: a0fb13a194e1eec4088b3e081c7d158d
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -103,10 +103,10 @@ TextureImporter:
       name: Bonus score apple_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 225
-        height: 225
+        x: 4
+        y: 4
+        width: 24
+        height: 28
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
