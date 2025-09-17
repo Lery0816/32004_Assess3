@@ -9,6 +9,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector2[] pathPoints;
     private Animator animator;
     private AudioSource moveSFX;
+    private bool canMove = false;
     [SerializeField] public AudioClip moveClip;  
     
     void Start()
@@ -22,20 +23,17 @@ public class PlayerMovement : MonoBehaviour
             new Vector2(6f, -5f),
             new Vector2(1f, -5f)
         };
-        
         transform.position = pathPoints[0];
+        StartCoroutine(WaitStart(3f));
     }
     
     void Update()
     {
-        if (pathPoints.Length == 0) return;
-        
+        if (!canMove) return;
         Vector2 target = pathPoints[currentTarget];
+        Vector2 dir = (target - (Vector2)transform.position).normalized;
+        transform.position += (Vector3)dir*moveSpeed*Time.deltaTime;
         
-        transform.position = Vector2.MoveTowards(transform.position, target, moveSpeed * Time.deltaTime);
-        
-        Vector2 dir = target - (Vector2)transform.position;
-
         if (Mathf.Abs(dir.x) > Mathf.Abs(dir.y))
         {
             if (dir.x > 0) animator.Play("player-right");
@@ -47,7 +45,7 @@ public class PlayerMovement : MonoBehaviour
             else animator.Play("player-down");
         }
         
-        if (Vector2.Distance(transform.position, target) < 0.01f)
+        if (Vector2.Distance(transform.position, target) < 0.1f)
         {
             currentTarget = (currentTarget + 1) % pathPoints.Length;
         }
@@ -68,5 +66,11 @@ public class PlayerMovement : MonoBehaviour
                 moveSFX.Stop();
             }
         }
+    }
+    
+    IEnumerator WaitStart(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        canMove = true;
     }
 }

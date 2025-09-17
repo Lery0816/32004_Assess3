@@ -23,43 +23,18 @@ public class LevelGenerator : MonoBehaviour
             {2,2,2,2,2,1,5,3,3,0,4,0,0,0},
             {0,0,0,0,0,0,5,0,0,0,4,0,0,0}
         };
-        
-    public int[,] levelMap1 = {
-        {1,2,2,2,2,2,2,2,2,2,2,2,2,7},
-        {2,5,5,5,5,5,5,5,5,5,5,5,5,4},
-        {2,5,3,4,4,3,5,3,4,4,4,3,5,4},
-        {2,6,4,0,0,4,5,4,0,0,0,4,5,4},
-        {2,5,3,4,4,3,5,3,4,4,4,3,5,3},
-        {2,5,5,5,5,5,5,5,5,5,5,5,5,5},
-        {7,4,4,3,5,5,5,3,3,5,3,4,4,4},
-        {7,4,4,3,5,5,5,4,4,5,3,4,4,3},
-        {2,5,5,5,5,5,5,4,4,5,5,5,5,4},
-        {1,2,2,2,2,1,5,4,3,4,4,3,0,4},
-        {0,0,0,0,0,2,5,4,3,4,4,3,0,3},
-        {0,0,0,0,0,2,5,4,4,0,0,0,0,0},
-        {0,0,0,0,0,2,5,4,4,0,3,4,4,8},
-        {2,2,2,2,2,1,5,3,3,0,4,0,0,0},
-        {0,0,0,0,0,0,5,0,0,0,4,0,0,0}
-    };
 
     void Start()
     {
-        GenerateLevel();
-    }
-
-    void GenerateLevel()
-    {
         ClearOldLevel();
-        GenerateLevel(BuildMap(), Vector2.zero, transform);
+        GenerateLevel(BuildMap(), transform);
         AdjustCamera();
     }
+    
     void ClearOldLevel()
     {
         GameObject oldLevel = GameObject.Find("Manual Level Layout");
-        if (oldLevel != null)
-        {
-            DestroyImmediate(oldLevel);
-        }
+        Destroy(oldLevel);
     }
     
     int[,] BuildMap()
@@ -75,18 +50,17 @@ public class LevelGenerator : MonoBehaviour
         {
             for (int c = 0; c < cols; c++)
             {
-                int v = levelMap[r, c];
-                newMap[r, c] = v;
-                newMap[r, (fullCols - 1) - c] = v;
-                newMap[(fullRows - 1) - r, c] = v;
-                newMap[(fullRows - 1) - r, (fullCols - 1) - c] = v;
+                int temp = levelMap[r, c];
+                newMap[r, c] = temp;
+                newMap[r, (fullCols - 1) - c] = temp;
+                newMap[(fullRows - 1) - r, c] = temp;
+                newMap[(fullRows - 1) - r, (fullCols - 1) - c] = temp;
             }
         }
-
         return newMap;
     }
     
-    void GenerateLevel(int[,] map, Vector2 offset, Transform parent)
+    void GenerateLevel(int[,] map,  Transform parent)
     {
         int rows = map.GetLength(0);
         int cols = map.GetLength(1);
@@ -97,7 +71,7 @@ public class LevelGenerator : MonoBehaviour
             {
                 int tileId = map[r, c];
                 if (tileId == 0) continue;
-                Vector3 pos = new Vector3(c , -r , 0) + (Vector3)offset;
+                Vector3 pos = new Vector3(c , -r , 0) ;
                 GameObject prefab = tilePrefabs[tileId];
                 Instantiate(prefab, pos, ComputeRotation(map,r,c,tileId), parent);
             }
@@ -115,6 +89,8 @@ public class LevelGenerator : MonoBehaviour
 
         if (id == 2 || id == 4 || id == 8)
         {
+            if(!up&&!down&&(left|| right)) return Quaternion.identity;
+            if(!left&&!right&&(up|| down)) return Quaternion.Euler(0, 0, 90);
             if (!up || !down) return Quaternion.identity;
             return Quaternion.Euler(0, 0, 90);
         }
